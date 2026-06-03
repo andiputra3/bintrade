@@ -9,7 +9,7 @@ from models.bin import Bin
 class BinBuilder:
     """Build dynamic ATR bins centered around a reference price."""
 
-    atr_multiplier: float = 1.0
+    atr_multiplier: float = 2.0
     min_bin: int = -20
     max_bin: int = 20
 
@@ -26,12 +26,9 @@ class BinBuilder:
 
         return [
             Bin(
-                index=index,
+                bin_id=index,
                 lower_price=reference_price + (index * step),
                 upper_price=reference_price + ((index + 1) * step),
-                atr=atr,
-                atr_multiplier=self.atr_multiplier,
-                reference_price=reference_price,
             )
             for index in range(self.min_bin, self.max_bin + 1)
         ]
@@ -46,12 +43,9 @@ class BinBuilder:
             return None
 
         return Bin(
-            index=raw_index,
+            bin_id=raw_index,
             lower_price=reference_price + (raw_index * step),
             upper_price=reference_price + ((raw_index + 1) * step),
-            atr=atr,
-            atr_multiplier=self.atr_multiplier,
-            reference_price=reference_price,
         )
 
     @staticmethod
