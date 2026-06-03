@@ -1,25 +1,24 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime
 from enum import StrEnum
 
 
-class PositionSide(StrEnum):
-    LONG = "LONG"
-    SHORT = "SHORT"
+class PositionStatus(StrEnum):
+    OPEN = "OPEN"
+    CLOSED = "CLOSED"
 
 
 @dataclass
 class Position:
-    symbol: str
-    side: PositionSide
-    quantity: float
+    position_id: str
     entry_price: float
-    opened_at: datetime
-    current_price: float | None = None
-    closed_at: datetime | None = None
+    entry_bin: int
+    qty: float
+    remaining_qty: float
+    realized_pnl: float = 0.0
+    status: PositionStatus = PositionStatus.OPEN
 
     @property
     def is_open(self) -> bool:
-        return self.closed_at is None
+        return self.status is PositionStatus.OPEN
