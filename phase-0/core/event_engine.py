@@ -35,7 +35,7 @@ class EventEngine:
             self.events.extend(generated)
             return generated
 
-        if self.current_bin_index != bin_.index:
+        if self.current_bin_index != bin_.bin_id:
             if self.current_bin_index is not None:
                 generated.append(
                     self._create_event(
@@ -51,10 +51,10 @@ class EventEngine:
                     event_type=EventType.ENTER_BIN,
                     timestamp=timestamp,
                     price=price,
-                    bin_index=bin_.index,
+                    bin_index=bin_.bin_id,
                 )
             )
-            self.current_bin_index = bin_.index
+            self.current_bin_index = bin_.bin_id
 
         self.events.extend(generated)
         return generated
@@ -66,16 +66,9 @@ class EventEngine:
         timestamp: datetime | None = None,
         metadata: dict[str, Any] | None = None,
     ) -> Event:
-        """Emit BUY, SELL, BUYBACK, TAKE_PROFIT, or TRAILING_STOP event."""
-        allowed = {
-            EventType.BUY,
-            EventType.SELL,
-            EventType.BUYBACK,
-            EventType.TAKE_PROFIT,
-            EventType.TRAILING_STOP,
-        }
-        if event_type not in allowed:
-            raise ValueError(f"Unsupported trade event type: {event_type.value}")
+        """Emit a non-bin event through the event engine."""
+        if event_type in {EventType.ENTER_BIN, EventType.EXIT_BIN}:
+            raise ValueError(f"Use on_bin for bin transition event: {event_type.value}")
 
         event = self._create_event(
             event_type=event_type,
