@@ -6,13 +6,13 @@ from models.event import EventType
 
 
 def test_dynamic_atr_bins_are_built_from_atr() -> None:
-    builder = BinBuilder(atr_multiplier=2.0)
+    builder = BinBuilder()
     bins = builder.build_bins(reference_price=100.0, atr=5.0)
 
     assert len(bins) == 41
-    assert bins[0].index == -20
-    assert bins[-1].index == 20
-    assert bins[20].index == 0
+    assert bins[0].bin_id == -20
+    assert bins[-1].bin_id == 20
+    assert bins[20].bin_id == 0
     assert bins[20].lower_price == 100.0
     assert bins[20].upper_price == 110.0
 
@@ -22,7 +22,7 @@ def test_locate_bin_and_event_engine_emit_enter_bin() -> None:
     bin_ = builder.locate_bin(price=106.0, reference_price=100.0, atr=5.0)
 
     assert bin_ is not None
-    assert bin_.index == 1
+    assert bin_.bin_id == 1
 
     engine = EventEngine()
     events = engine.on_bin(bin_=bin_, price=106.0)
